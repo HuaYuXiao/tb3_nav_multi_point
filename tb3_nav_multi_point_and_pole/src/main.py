@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from functools import partial
 from std_msgs.msg import String
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
@@ -11,6 +12,7 @@ from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 
 
 def moveStep(client, goal, x, y):
+    print('moving')
    # Move 0.5 meters forward along the x axis of the "map" coordinate frame
     goal.target_pose.pose.position.x = x
     goal.target_pose.pose.position.y = y
@@ -19,6 +21,7 @@ def moveStep(client, goal, x, y):
 
    # Sends the goal to the action serve
     client.send_goal(goal)
+    print('goal set')
 
    # Waits for the server to finish performing the action.
     wait = client.wait_for_result()
@@ -28,10 +31,14 @@ def moveStep(client, goal, x, y):
         rospy.signal_shutdown("Action server not available!")
     else:
         # Result of executing the action
-        return client.get_result()    
+        
+        print('hello,goal reached')
+        # return client.get_result()    
 
 
 def movebase_client():
+    global flag
+    print('move:',flag)
    # Create an action client called "move_base" with action definition file "MoveBaseAction"
     client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
 
@@ -43,23 +50,25 @@ def movebase_client():
     goal.target_pose.header.frame_id = "map"
     goal.target_pose.header.stamp = rospy.Time.now()
 
-    pointList = [[-3.75, 4.4], 
-                 [-4.23, 0.3],
+    pointList = [[-4.23, 0.3],
                  [1.3, -0.7], 
                  [0,0],
                  [0.2, 4.0], 
                  [-3.75, 4.4]]
     
     for point in pointList:
-        moveStep(client, goal, point[0], point[1])
-        
-        flag = True
+        if flag==False:
+            print(point)
+            moveStep(client, goal, point[0], point[1])
+            flag = True
+            print('Reached:',flag)
 
 
-def laser_callback(msg, flag):
-    if not flag:
+def laser_callback(msg):
+    global flag
+    print('cb:',flag)
+    if flag == False:
         return
-    
     pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
 
     # Find the closest point (the pillar)
@@ -84,9 +93,11 @@ def laser_callback(msg, flag):
     print('linear.x:', twist.linear.x, 'angular.z:', twist.angular.z)
     pub.publish(twist)
 
-    if range_min < 0.15:
+    if (range_min < 0.15) and (range_min > 0.04):
         time.sleep(2)
         flag = False
+        print('Reached the wall')
+
 
 
 # If the python node is executed as main process (sourced directly)
@@ -94,11 +105,14 @@ if __name__ == '__main__':
     try:
         global flag
         flag = False
+        print('start:',flag)
        # Initializes a rospy node to let the SimpleActionClient publish and subscribe
         rospy.init_node('movebase_client_py')
+        movebase_client()  
         rospy.Subscriber('/scan', LaserScan, laser_callback)
-        result = movebase_client()
-        if result:
-            rospy.loginfo("Goal execution done!")
+        rospy.spin()
+              
+        # if result:
+        #     rospy.loginfo("Goal execution done!")
     except rospy.ROSInterruptException:
         rospy.loginfo("Navigation test finished.")
