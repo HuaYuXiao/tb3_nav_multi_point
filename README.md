@@ -5,21 +5,21 @@
 ## 基本指令
 
 ```bash
-xizhe@ubuntu:~$ roscore
+roscore
 ```
 
 ```bash
-pi@raspberrypi:~ $ roslaunch turtlebot3_bringup turtlebot3_robot.launch
+$ roslaunch turtlebot3_bringup turtlebot3_robot.launch
 ```
 
 ```bash
-xizhe@ubuntu:~$ export TURTLEBOT3_MODEL=burger
+export TURTLEBOT3_MODEL=burger
 ```
 
 ```bash
-xizhe@ubuntu:~$ roslaunch turtlebot3_navigation turtlebot3_navigation.launch map_file:=$HOME/mmap.yaml
+roslaunch turtlebot3_navigation turtlebot3_navigation.launch map_file:=$HOME/mmap.yaml
 ```
 
 ```bash
-xizhe@ubuntu:~$ roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
+roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
 ```
