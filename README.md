@@ -14,33 +14,36 @@ https://youtu.be/5aUDObaqrCE
 
 ## 基本指令
 
-从机上
-
-```bash
-roslaunch turtlebot3_bringup turtlebot3_robot.launch
-```
-
-```bash
-export ROS_MASTER_URI=http://192.168.3.142:11311
-```
-
 主机上
 
 ```bash
 roscore
 ```
 
+从机上
+
+```bash
+export ROS_MASTER_URI=http://192.168.3.142:11311
+```
+
+```bash
+roslaunch turtlebot3_bringup turtlebot3_robot.launch
+```
+
+主机上
+
 ```bash
 export TURTLEBOT3_MODEL=burger
+```
+
+```bash
+roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
 ```
 
 ```bash
 roslaunch turtlebot3_navigation turtlebot3_navigation.launch map_file:=$HOME/mmap.yaml
 ```
 
-```bash
-roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
-```
 
 ## 团队贡献
 
