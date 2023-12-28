@@ -7,6 +7,8 @@
 ![Static Badge](https://img.shields.io/badge/Ubuntu-20.04-E95420?logo=ubuntu)
 ![Static Badge](https://img.shields.io/badge/Python-3.9.13-3776AB?logo=python)
 
+在实验室环境中，从TurtleBot3无人车上搭载的LDS-01激光雷达对场地进行SLAM，之后控制无人车动态避障导航到指定位置。根据激光反射强度以及对点簇的圆拟合效果，确定环境中最近的圆柱障碍物，闭环控制移动接近圆柱。
+
 ## View on YouTube
 
 https://youtu.be/5aUDObaqrCE
@@ -55,5 +57,5 @@ roslaunch turtlebot3_navigation turtlebot3_navigation.launch map_file:=$HOME/mma
 
 ## 团队贡献
 
-郝熙哲：寻找柱子算法
-华羽霄：路径规划导航
+- 郝熙哲：寻找柱子算法
+- 华羽霄：路径规划导航
