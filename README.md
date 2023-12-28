@@ -15,6 +15,11 @@ https://youtu.be/5aUDObaqrCE
 ## 基本指令
 
 ```bash
+export ROS_MASTER_URI=http://192.168.3.142:11311
+```
+
+
+```bash
 roscore
 ```
 
