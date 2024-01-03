@@ -2,13 +2,32 @@ from define import *
 
 
 def find_pillar(pub, twist):
+    while True:
         msg = rospy.wait_for_message("/scan", LaserScan, timeout=None)
 
-        print(msg.ranges)
-        print(msg.intensities)
+        # Find the closest point (the pillar)
+        range_min = min([range for range in msg.ranges if range != 0.0])
+        range_min_index = msg.ranges.index(range_min)
 
+        print('min:', range_min, 'index: ', range_min_index)
 
+        if (range_min < 1.5 and range_min > 0.3):
+            if (range_min_index > 350) or (range_min_index < 10):
+                twist.linear.x = 0.2
+                twist.angular.z = 0.0
+            else:
+                twist.linear.x = 0.0
+                twist.angular.z = 0.4
+        else:
+            twist.linear.x = 0.0
+            twist.angular.z = 0.0
+            pub.publish(twist)
+            break
 
+        pub.publish(twist)
+
+        if twist.linear.x == 0.0 and twist.angular.z == 0.0:
+            break
 
 
 def movebase_client(client, goal, point):
