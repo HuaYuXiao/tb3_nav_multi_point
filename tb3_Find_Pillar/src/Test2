@@ -1,0 +1,61 @@
+import rospy
+from sensor_msgs.msg import LaserScan
+import numpy as np
+
+def process_scan(data):
+    ranges = np.array(data.ranges)
+    ranges = np.where((ranges > data.range_min) & (ranges < data.range_max), ranges, 0)
+
+    objects = []
+    current_object = []
+    for i in range(len(ranges)):
+        if ranges[i] != 0:
+            current_object.append((i, ranges[i]))
+        elif current_object:
+            objects.append(current_object)
+            current_object = []
+    if current_object:
+        objects.append(current_object)
+
+    pillars = []
+    for obj in objects:
+        if  1 <len(obj) < 100:  # 保持原有的连续距离读数阈值
+            # 计算物体宽度
+            angle_span = (obj[-1][0] - obj[0][0]) * data.angle_increment
+            average_distance = np.mean([d for _, d in obj])
+            object_width = 2 * average_distance * np.tan(angle_span / 2)  # 宽度估算公式
+
+            if 0.01 <= object_width <= 0.25:  # 5cm到30cm的直径范围
+                pillars.append(obj)
+
+    return pillars
+
+def find_closest_pillar(data):
+    pillars = process_scan(data)
+    closest_pillar = None
+    min_distance = float('inf')
+
+    for pillar in pillars:
+        for _, distance in pillar:
+            if distance < min_distance:
+                min_distance = distance
+                closest_pillar = pillar
+
+    return closest_pillar, min_distance
+
+def laser_callback(data):
+    closest_pillar, distance = find_closest_pillar(data)
+    if closest_pillar:
+        angle_index = closest_pillar[len(closest_pillar) // 2][0]
+        angle = data.angle_min + angle_index * data.angle_increment
+        print(f"最近的柱子距离: {distance} 米, 方位角: {np.degrees(angle)} 度")
+    else:
+        print("没有检测到柱子")
+
+def main():
+    rospy.init_node('pillar_finder', anonymous=True)
+    rospy.Subscriber('/scan', LaserScan, laser_callback)
+    rospy.spin()
+
+if __name__ == '__main__':
+    main()
