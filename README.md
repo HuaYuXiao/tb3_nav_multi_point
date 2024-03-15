@@ -1,6 +1,6 @@
 # TurtleBot3-burger: Navigation and Find Pillar
 
-南方科技大学《EE346移动机器人导航》课程实验
+南方科技大学《EE346移动机器人导航》课程实验：TurtleBot3室内SLAM+导航+跟踪
 
 ![HitCount](https://img.shields.io/endpoint?url=https%3A%2F%2Fhits.dwyl.com%2FHuaYuXiao%2Ftb3-Navigation-and-Find-Pillar.json%3Fcolor%3Dpink)
 ![Static Badge](https://img.shields.io/badge/ROS-melodic-22314E?logo=ros)
